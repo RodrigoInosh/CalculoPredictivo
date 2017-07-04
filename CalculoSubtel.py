@@ -128,7 +128,12 @@ if(params.recomendacion == "370"):
     distancias = tareasGeo.ListaAString(a370)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a370, params.radiales)
     #arcpy.SetParameter(24, "Calculado con recomendacion 370" )
-    
+
+arcpy.AddMessage(params.latitud)
+arcpy.AddMessage(params.latitud)
+arcpy.AddMessage(distancias)
+#BORRARarcpy.AddMessage(stop)#BORRAR  
 arcpy.SetParameter(22, poli)
 arcpy.SetParameter(23, nubePuntos)
 arcpy.SetParameter(24, distancias)
+#arcpy.SetParameter(25, params.resumenParametros() )

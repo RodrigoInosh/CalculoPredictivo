@@ -84,10 +84,10 @@ class TareasGeometricas():
         #arcpy.SelectLayerByLocation_management(fcNube, "CLEAR_SELECTION")
         #arcpy.AddSurfaceInformation_3d(fcNube,imagen,"Z","BILINEAR")
         arcpy.AddMessage("Se obtuvieron las alturas para los puntos")
-        
+
         del inCur
         del seCur
-        
+
         return fcNube
     
     # Input: posicion central(longitud,latitud), lista de distancias
@@ -179,7 +179,7 @@ class TareasGeometricas():
         cursor = arcpy.da.SearchCursor(fcNube, ["SHAPE@X","SHAPE@Y"], "distancia=0 and angulo=0") 
         for row in cursor:
             x = row[0]
-            y = row[1] 
+            y = row[1]
         return [x,y]
     
     '''
