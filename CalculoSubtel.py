@@ -16,50 +16,40 @@ import CalculosZona370
 import OtrosCalculos as Calculos
 import arcpy
 
-def calculaGrados(valor):
-        t = str(int(valor))
-        l = len(t)
-        return float(t[0:l-4]) + (float(t[l-4:l-2])/60) + (float(t[l-2:l])/3600)
-
 ''' Inicio del proceso '''
 #arcpy.env.overwriteOutput = True
 params = ParametrosFormulario.ParametrosFormulario()
 
-# params.radiales = int(arcpy.GetParameter(0)) 
-# params.recomendacion = arcpy.GetParameter(1)
-# params.potencia = arcpy.GetParameter(2)
-# params.ganancia = arcpy.GetParameter(3)
-# params.alturaAntenaTransmisora = arcpy.GetParameter(4)
-# params.alturaAntenaReceptora = arcpy.GetParameter(5)
-# params.latitud = arcpy.GetParameter(6)
-# params.longitud = arcpy.GetParameter(7)
-# params.perdidaCablesConectores = arcpy.GetParameter(8)
-# params.perdidaDivisorPotencia = arcpy.GetParameter(9)
-# params.otrasPerdidas = arcpy.GetParameter(10)
-# params.parsePerdidasLobulo(arcpy.GetParameter(11), params.radiales)
-# params.obstaculosCircundantesTx = arcpy.GetParameter(12)
-# params.obstaculosCircundantesRx = arcpy.GetParameter(13)
-# params.toleranciaZonasSombra = arcpy.GetParameter(14)
-# params.resolucionCalculo = arcpy.GetParameter(15)
-# params.porcentajeTiempo = arcpy.GetParameter(16)
-# params.porcentajeUbicacion = arcpy.GetParameter(17)
-# params.frecuencia = arcpy.GetParameter(18)
-# params.intensidadCampoReferencia = arcpy.GetParameter(19)
+params.radiales = int(arcpy.GetParameter(0)) 
+params.recomendacion = arcpy.GetParameter(1)
+params.potencia = arcpy.GetParameter(2)
+params.ganancia = arcpy.GetParameter(3)
+params.alturaAntenaTransmisora = arcpy.GetParameter(4)
+params.alturaAntenaReceptora = arcpy.GetParameter(5)
+params.latitud = arcpy.GetParameter(6)
+params.longitud = arcpy.GetParameter(7)
+params.perdidaCablesConectores = arcpy.GetParameter(8)
+params.perdidaDivisorPotencia = arcpy.GetParameter(9)
+params.otrasPerdidas = arcpy.GetParameter(10)
+params.parsePerdidasLobulo(arcpy.GetParameter(11), params.radiales)
+params.obstaculosCircundantesTx = arcpy.GetParameter(12)
+params.obstaculosCircundantesRx = arcpy.GetParameter(13)
+params.toleranciaZonasSombra = arcpy.GetParameter(14)
+params.resolucionCalculo = arcpy.GetParameter(15)
+params.porcentajeTiempo = arcpy.GetParameter(16)
+params.porcentajeUbicacion = arcpy.GetParameter(17)
+params.frecuencia = arcpy.GetParameter(18)
+params.intensidadCampoReferencia = arcpy.GetParameter(19)
 params.imagen = arcpy.GetParameter(20)
-# params.multiplo = arcpy.GetParameter(21)
+params.multiplo = arcpy.GetParameter(21)
 
 params.revalidaParametros()
 
 ''' Pasar de watts a kilowatts '''
 params.potencia = float(params.potencia)/1000
 
-latitud = -calculaGrados(params.latitud)
-arcpy.AddMessage("Lat: "+str(params.latitud) + " ---> " + str(latitud))
-longitud = -calculaGrados(params.longitud)
-arcpy.AddMessage("Long: " +str(params.longitud) + " ---> " + str(longitud))
-
 tareasGeo = TareasGeometricas.TareasGeometricas()
-nubePuntos = tareasGeo.GeneraNubeDePuntos(latitud, longitud, params.imagen, params.resolucionCalculo, params.radiales)
+nubePuntos = tareasGeo.GeneraNubeDePuntos(params.latitud, params.longitud, params.imagen, params.resolucionCalculo, params.radiales)
 matrizCotas = tareasGeo.GeneraMatrizDeCotas(nubePuntos, params.resolucionCalculo)
 #import pruebas
 #matrizCotas = pruebas.Genera_Tabla_Cotas_Prueba()# tareasGeo.GeneraMatrizDeCotas(nubePuntos)

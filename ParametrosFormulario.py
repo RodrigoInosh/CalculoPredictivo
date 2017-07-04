@@ -9,24 +9,24 @@ import arcpy
 class ParametrosFormulario:
     # PARAMETROS POR DEFECTO - CAMBIAR SEGUN TIPO DE SERVICIO AM,FM, RCC, ISDBT o UHF
     _recomendacion = "1546"
-    _potencia = 6000
-    _ganancia = 8.66
-    _alturaAntenaTransmisora = 42.67
+    _potencia = 250
+    _ganancia = 3
+    _alturaAntenaTransmisora = 25
     _alturaAntenaReceptora = 10
-    _latitud = 330254#-33.0483333333333
-    _longitud = 713342#-71.5616666666667
-    _perdidaCablesConectores = 1.2
+    _latitud = -32.4247222
+    _longitud = -70.6325
+    _perdidaCablesConectores = 1
     _perdidaDivisorPotencia = 0
     _otrasPerdidas = 0
-    _radiales = 72
-    _perdidasLobulo = [5,4.445,3.89,3.335,2.78,2.225,1.67,1.115,0.56,0.92,1.28,1.64,2,2.6675,3.335,4.0025,4.67,6.8925,9.115,11.3375,13.56,17.3375,21.115,24.8925,28.67,31.5025,34.335,37.1675,40,40,40,40,40,40,40,40,40,37.2225,34.445,31.6675,28.89,26.1125,23.335,20.5575,17.78,15.9175,14.055,12.1925,10.33,8.775,7.22,5.665,4.11,3.3875,2.665,1.9425,1.22,1.3325,1.445,1.5575,1.67,1.835,2,2.165,2.33,2.665,3,3.335,3.67,4.0025,4.335,4.6675]
+    _radiales = 72        
+    _perdidasLobulo = [0] * 72
     _obstaculosCircundantesTx = 10
     _obstaculosCircundantesRx = 10
     _toleranciaZonasSombra = 1
     _resolucionCalculo = 500
     _porcentajeTiempo = 50
     _porcentajeUbicacion = 90
-    _frecuencia = 557
+    _frecuencia = 99.3
     _intensidadCampoReferencia = 48
     _imagen = "" #"c:\\arcgisserver\\Subtel2.sde\\Subtel2_prod.SUBTEL2.Imagen"
     _multiplo = 1
