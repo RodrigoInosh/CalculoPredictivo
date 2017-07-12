@@ -89,6 +89,32 @@ class TareasGeometricas():
         del seCur
 
         return fcNube
+
+    def CapaCensal(self, poligono):
+        arcpy.AddMessage("---Capa censal---")
+        arcpy.env.workspace = "C:/env/Nacional.gdb"
+        # arcpy.CopyFeatures_management(poligono, "poligono")
+        lyr = arcpy.MakeFeatureLayer_management("Valparaiso","lyr")
+        inFeatures = [poligono, "Valparaiso"]
+        intersectOutput = "stream_crossings"
+        arcpy.env.outputZFlag = "Disabled"
+        arcpy.env.outputMFlag = "Disabled"
+        clusterTolerance = 0
+        arcpy.Intersect_analysis(inFeatures, intersectOutput, "ALL")
+
+        cursor1 = arcpy.SearchCursor("Valparaiso")
+        arcpy.AddMessage("Suma Censal Gnral")
+        suma_censal1 = 0
+        for row in cursor1:
+            suma_censal1 += float(row.getValue("TOT_VIV"))
+        arcpy.AddMessage("Total:"+ str(suma_censal1))
+
+        cursor = arcpy.SearchCursor(intersectOutput)
+        arcpy.AddMessage("Suma Censal Poligono")
+        suma_censal = 0
+        for row in cursor:
+            suma_censal += float(row.getValue("TOT_VIV"))
+        arcpy.AddMessage("Total:"+ str(suma_censal))
     
     # Input: posicion central(longitud,latitud), lista de distancias
     # Output: poligono
@@ -247,4 +273,3 @@ class TareasGeometricas():
         #arcpy.AddSurfaceInformation_3d(fcNube,imagen,"Z","BILINEAR")
     #    arcpy.AddMessage("Se obtuvieron las alturas para los puntos")
     #    return fcNube  
-        

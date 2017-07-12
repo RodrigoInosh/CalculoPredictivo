@@ -98,6 +98,8 @@ if(params.recomendacion == "1546+"):
         a1546mas_m = Calculos.MultiplicaLista(a1546mas, params.multiplo, params.radiales)
         distancias = tareasGeo.ListaAString(a1546mas_m)
         poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546mas_m, params.radiales)
+        tareasGeo.CapaCensal(nubePuntos)
+        # tareasGeo.CapaCensal(distancias)
         #arcpy.SetParameter(25, "Calculado con recomendacion 1546+" )
     else:
         calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
@@ -106,6 +108,8 @@ if(params.recomendacion == "1546+"):
         a1546_m = Calculos.MultiplicaLista(a1546, params.multiplo, params.radiales)
         distancias = tareasGeo.ListaAString(a1546_m)
         poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546_m, params.radiales)
+        tareasGeo.CapaCensal(nubePuntos)
+        # tareasGeo.CapaCensal(distancias)
         #arcpy.SetParameter(25, "Calculado con recomendacion 1546-" )
 
 if(params.recomendacion == "1546"):
@@ -117,6 +121,7 @@ if(params.recomendacion == "1546"):
     a1546_m = Calculos.MultiplicaLista(a1546, params.multiplo, params.radiales)
     distancias = tareasGeo.ListaAString(a1546_m)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546_m, params.radiales)
+    tareasGeo.CapaCensal(nubePuntos)
     #arcpy.SetParameter(25, "Calculado con recomendacion 1546-" )
     
 if(params.recomendacion == "370"):
@@ -129,10 +134,6 @@ if(params.recomendacion == "370"):
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a370, params.radiales)
     #arcpy.SetParameter(24, "Calculado con recomendacion 370" )
 
-arcpy.AddMessage(params.latitud)
-arcpy.AddMessage(params.latitud)
-arcpy.AddMessage(distancias)
-#BORRARarcpy.AddMessage(stop)#BORRAR  
 arcpy.SetParameter(22, poli)
 arcpy.SetParameter(23, nubePuntos)
 arcpy.SetParameter(24, distancias)
