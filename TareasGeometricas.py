@@ -13,6 +13,7 @@ import os
 class TareasGeometricas(): 
     srWGS84 = arcpy.SpatialReference(4326)   #GCS_WGS_84
     srWebMercator = arcpy.SpatialReference(3857)  #WGS_1984_Web_Mercator_Auxiliary_Sphere
+    poligono_servicio = ""
     
     # EPSG 3854 = wkid 102100
     # EPSG 3854 para esri
@@ -90,31 +91,43 @@ class TareasGeometricas():
 
         return fcNube
 
-    def CapaCensal(self, poligono):
+    def CapaCensal(self, x, y, distancias, radiales, datos_censales):
         arcpy.AddMessage("---Capa censal---")
-        arcpy.env.workspace = "C:/env/Nacional.gdb"
-        # arcpy.CopyFeatures_management(poligono, "poligono")
-        lyr = arcpy.MakeFeatureLayer_management("Valparaiso","lyr")
-        inFeatures = [poligono, "Valparaiso"]
-        intersectOutput = "stream_crossings"
+
+        suma_censal = 0
+        poligono = self.GeneraPoligonoInterseccion(x, y, distancias, radiales)
+        arcpy.env.workspace = datos_censales
+        # capa_interseccion = arcpy.CreateFeatureclass_management("in_memory","poligono_interseccion","POLYGON","","DISABLED","DISABLED",self.srWGS84)
+        intersectOutput = "capa_interseccion"
         arcpy.env.outputZFlag = "Disabled"
         arcpy.env.outputMFlag = "Disabled"
-        clusterTolerance = 0
-        arcpy.Intersect_analysis(inFeatures, intersectOutput, "ALL")
+        # inFeatures = [poligono, "Valparaiso_Modificado"]
+        # inFeatures = [poligono, datos_censales]
+        # arcpy.Intersect_analysis(inFeatures, intersectOutput, "ALL")
 
-        cursor1 = arcpy.SearchCursor("Valparaiso")
-        arcpy.AddMessage("Suma Censal Gnral")
-        suma_censal1 = 0
-        for row in cursor1:
-            suma_censal1 += float(row.getValue("TOT_VIV"))
-        arcpy.AddMessage("Total:"+ str(suma_censal1))
+        desc = arcpy.Describe(datos_censales)
+        tipo = desc.shapeType
+        arcpy.AddMessage("tipo")
+        arcpy.AddMessage(tipo)
 
-        cursor = arcpy.SearchCursor(intersectOutput)
-        arcpy.AddMessage("Suma Censal Poligono")
-        suma_censal = 0
-        for row in cursor:
-            suma_censal += float(row.getValue("TOT_VIV"))
-        arcpy.AddMessage("Total:"+ str(suma_censal))
+        fields = arcpy.ListFields(datos_censales)
+        for field in fields:
+            arcpy.AddMessage(field.name)
+
+        # fields = arcpy.ListFields(datos_censales)
+        # for field in fields:
+        #     arcpy.AddMessage(field.name)
+
+        # cursor = arcpy.SearchCursor(datos_censales)
+        # suma_censal = 0
+        # count_rows = 0
+        # for row in cursor:
+        #     # suma_censal += float(row.getValue("TOT_VIV"))
+        #     count_rows+=1
+
+        # arcpy.AddMessage("c:" + str(count_rows))
+        # arcpy.AddMessage("suma:" + str(suma_censal))
+        return suma_censal
     
     # Input: posicion central(longitud,latitud), lista de distancias
     # Output: poligono
@@ -127,7 +140,7 @@ class TareasGeometricas():
         arcpy.AddField_management(tb,"d","LONG")
         cursor = arcpy.da.InsertCursor(tb, ["x","y","a","d"])
         #radiales1 = int(radiales)
-        #radiales = self.params.radiales                                       
+        #radiales = self.params.radiales
         # Se omite el punto centrar, provoca errores en BearingDistanceToLine
         if len(distancias) == 1: # si hay solo un valor se asume que es el radio
             for a in range(0,360):
@@ -135,7 +148,7 @@ class TareasGeometricas():
         else:  
             for a in range(0,radiales):
                 cursor.insertRow((longitud,latitud,a*(360/radiales),distancias[a],))
-        del cursor              
+        del cursor
         arcpy.AddMessage("Se creo tabla temporal para calculo de ubicacion de puntos")
         
         tabla = os.path.join(arcpy.env.scratchGDB, 'tabla_distancias2')
@@ -157,23 +170,36 @@ class TareasGeometricas():
     def GeneraCapaPoligonos(self, x, y, distancias, radiales):
         fcPoli = arcpy.CreateFeatureclass_management("in_memory","area","POLYGON","","DISABLED","DISABLED",self.srWGS84)
         arcpy.AddField_management(fcPoli, 'area', 'DOUBLE')
-        cursor = arcpy.da.InsertCursor(fcPoli,["SHAPE@"])                                                      #AQUI(3,3)!!!!
+        cursor = arcpy.da.InsertCursor(fcPoli,["SHAPE@"])
         #radiales = self.params.radiales
         poli = self.GeneraPoligono2(x, y, [distancias[r]*1000 for r in range(0,radiales)], radiales)    
-        poli2 = self.GeneraPoligono2(x, y, [distancias[r]*1300 for r in range(0,radiales)], radiales)  
-            
+        poli2 = self.GeneraPoligono2(x, y, [distancias[r]*1300 for r in range(0,radiales)], radiales)
+
         cursor.insertRow(tuple([poli]))
         cursor.insertRow(tuple([poli2]))
         del cursor
         
         arcpy.CalculateField_management(fcPoli,'area','!shape.area@squarekilometers!','PYTHON')
-        
+
         return fcPoli
     '''
     **************************************************************************************************************
      MODIFICACION FIN 26 enero 2015
     **************************************************************************************************************
     '''
+
+    def GeneraPoligonoInterseccion(self, x, y, distancias, radiales):
+        poligonoZonaServicio = arcpy.CreateFeatureclass_management("in_memory","area","POLYGON","","DISABLED","DISABLED",self.srWGS84)
+        arcpy.AddField_management(poligonoZonaServicio, 'area', 'DOUBLE')
+        cursor = arcpy.da.InsertCursor(poligonoZonaServicio,["SHAPE@"])
+        poli = self.GeneraPoligono2(x, y, [distancias[r]*1000 for r in range(0,radiales)], radiales)
+
+        cursor.insertRow(tuple([poli]))
+        del cursor
+        
+        arcpy.CalculateField_management(poligonoZonaServicio,'area','!shape.area@squarekilometers!','PYTHON')
+
+        return poligonoZonaServicio
 
     def GeneraMatrizDeCotas(self, fcNube, resolucionCalculo):
         tabla = []

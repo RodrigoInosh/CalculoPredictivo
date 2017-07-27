@@ -42,6 +42,7 @@ params.frecuencia = arcpy.GetParameter(18)
 params.intensidadCampoReferencia = arcpy.GetParameter(19)
 params.imagen = arcpy.GetParameter(20)
 params.multiplo = arcpy.GetParameter(21)
+datos_censales = arcpy.GetParameter(22)
 
 params.revalidaParametros()
 
@@ -67,9 +68,10 @@ if(params.recomendacion == "1546-"):
     a1546_m = Calculos.MultiplicaLista(a1546, params.multiplo, params.radiales)
     distancias = tareasGeo.ListaAString(a1546_m)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546_m, params.radiales)
+    capaCensal = tareasGeo.CapaCensal(x, y, a1546_m, params.radiales)
     #arcpy.SetParameter(25, "Calculado con recomendacion 1546" )
     
-if(params.recomendacion == "1812"):
+elif(params.recomendacion == "1812"):
     # Calculos para recomendacion 1812
     arcpy.AddMessage("Calculos para recomendacion 1812")
     calculo1812 = CalculosZona1812.CalculosZona1812(params, tablaValores)
@@ -79,9 +81,10 @@ if(params.recomendacion == "1812"):
     dlt = calculo1812.dlt
     distancias = tareasGeo.ListaAString(a1812_m)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a1812_m, params.radiales)
+    capaCensal = tareasGeo.CapaCensal(x, y, a1812_m, params.radiales)
     #arcpy.SetParameter(25, "Calculado con recomendacion 1812" )
 
-if(params.recomendacion == "1546+"):
+elif(params.recomendacion == "1546+"):
     arcpy.AddMessage("Calculos para recomendacion 1546+")
     # Calculos para recomendacion 1546
     calculo1546 = CalculosZona1546.CalculosZona1546(params, tablaValores)
@@ -98,7 +101,7 @@ if(params.recomendacion == "1546+"):
         a1546mas_m = Calculos.MultiplicaLista(a1546mas, params.multiplo, params.radiales)
         distancias = tareasGeo.ListaAString(a1546mas_m)
         poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546mas_m, params.radiales)
-        tareasGeo.CapaCensal(nubePuntos)
+        capaCensal = tareasGeo.CapaCensal(x, y, a1546mas_m, params.radiales)
         # tareasGeo.CapaCensal(distancias)
         #arcpy.SetParameter(25, "Calculado con recomendacion 1546+" )
     else:
@@ -108,11 +111,11 @@ if(params.recomendacion == "1546+"):
         a1546_m = Calculos.MultiplicaLista(a1546, params.multiplo, params.radiales)
         distancias = tareasGeo.ListaAString(a1546_m)
         poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546_m, params.radiales)
-        tareasGeo.CapaCensal(nubePuntos)
+        capaCensal = tareasGeo.CapaCensal(x, y, a1546_m, params.radiales)
         # tareasGeo.CapaCensal(distancias)
         #arcpy.SetParameter(25, "Calculado con recomendacion 1546-" )
 
-if(params.recomendacion == "1546"):
+elif(params.recomendacion == "1546"):
     # Calculos para recomendacion 1546
     arcpy.AddMessage("Calculos para recomendacion 1546")
     calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
@@ -121,10 +124,11 @@ if(params.recomendacion == "1546"):
     a1546_m = Calculos.MultiplicaLista(a1546, params.multiplo, params.radiales)
     distancias = tareasGeo.ListaAString(a1546_m)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546_m, params.radiales)
-    tareasGeo.CapaCensal(nubePuntos)
-    #arcpy.SetParameter(25, "Calculado con recomendacion 1546-" )
+    capaCensal = tareasGeo.CapaCensal(x, y, a1546_m, params.radiales, datos_censales)
+
+    arcpy.SetParameter(25, "Calculado con recomendacion 1546-" )
     
-if(params.recomendacion == "370"):
+elif(params.recomendacion == "370"):
     arcpy.AddMessage("Calculos para recomendacion 370")
     calculo370 = CalculosZona370.CalculosZona370(params, tablaValores)
     a370 = calculo370.Inicio_370(params.radiales)
@@ -132,9 +136,10 @@ if(params.recomendacion == "370"):
     a370_m = Calculos.MultiplicaLista(a370, params.multiplo, params.radiales)
     distancias = tareasGeo.ListaAString(a370)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a370, params.radiales)
+    capaCensal = tareasGeo.CapaCensal(x, y, a370, params.radiales)
     #arcpy.SetParameter(24, "Calculado con recomendacion 370" )
 
 arcpy.SetParameter(22, poli)
 arcpy.SetParameter(23, nubePuntos)
 arcpy.SetParameter(24, distancias)
-#arcpy.SetParameter(25, params.resumenParametros() )
+arcpy.SetParameter(25, capaCensal)
