@@ -91,42 +91,33 @@ class TareasGeometricas():
 
         return fcNube
 
-    def CapaCensal(self, x, y, distancias, radiales, datos_censales):
+    def CapaCensal(self, x, y, poligono, capa_censal):
         arcpy.AddMessage("---Capa censal---")
 
         suma_censal = 0
-        poligono = self.GeneraPoligonoInterseccion(x, y, distancias, radiales)
-        arcpy.env.workspace = datos_censales
-        # capa_interseccion = arcpy.CreateFeatureclass_management("in_memory","poligono_interseccion","POLYGON","","DISABLED","DISABLED",self.srWGS84)
-        intersectOutput = "capa_interseccion"
+        # poligono = self.GeneraPoligonoInterseccion(x, y, distancias, radiales)
+        # arcpy.env.workspace = "c:\env\Nacional.gdb"
+        # intersectOutput = "capa_interseccion"
+        intersectOutput = arcpy.CreateFeatureclass_management("in_memory", "FC", "POLYGON")
         arcpy.env.outputZFlag = "Disabled"
         arcpy.env.outputMFlag = "Disabled"
         # inFeatures = [poligono, "Valparaiso_Modificado"]
-        # inFeatures = [poligono, datos_censales]
-        # arcpy.Intersect_analysis(inFeatures, intersectOutput, "ALL")
+        inFeatures = [poligono, capa_censal]
+        arcpy.Intersect_analysis(inFeatures, intersectOutput, "ALL")
 
-        desc = arcpy.Describe(datos_censales)
-        tipo = desc.shapeType
-        arcpy.AddMessage("tipo")
-        arcpy.AddMessage(tipo)
+        # desc = arcpy.Describe(capa_censal)
+        # tipo = desc.shapeType
+        # arcpy.AddMessage("tipo")
+        # arcpy.AddMessage(tipo)
 
-        fields = arcpy.ListFields(datos_censales)
-        for field in fields:
-            arcpy.AddMessage(field.name)
-
-        # fields = arcpy.ListFields(datos_censales)
-        # for field in fields:
-        #     arcpy.AddMessage(field.name)
-
-        # cursor = arcpy.SearchCursor(datos_censales)
+        cursor = arcpy.SearchCursor(intersectOutput)
         # suma_censal = 0
-        # count_rows = 0
-        # for row in cursor:
-        #     # suma_censal += float(row.getValue("TOT_VIV"))
-        #     count_rows+=1
+        count_rows = 0
+        for row in cursor:
+            suma_censal += float(row.getValue("TOT_VIV"))
+            count_rows+=1
 
-        # arcpy.AddMessage("c:" + str(count_rows))
-        # arcpy.AddMessage("suma:" + str(suma_censal))
+        # suma_censal = 10
         return suma_censal
     
     # Input: posicion central(longitud,latitud), lista de distancias

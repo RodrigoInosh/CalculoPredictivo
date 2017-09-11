@@ -28,7 +28,7 @@ class ParametrosFormulario:
     _porcentajeUbicacion = 90
     _frecuencia = 99.3
     _intensidadCampoReferencia = 48
-    _imagen = "" #"c:\\arcgisserver\\Subtel2.sde\\Subtel2_prod.SUBTEL2.Imagen"
+    _imagen = "ARCGIS.CR_Imagen" #"c:\\arcgisserver\\Subtel2.sde\\Subtel2_prod.SUBTEL2.Imagen"
     _multiplo = 1
         
     def __init__(self):
