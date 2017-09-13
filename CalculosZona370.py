@@ -20,25 +20,16 @@ class CalculosZona370():
     def Inicio_370(self, radiales):
         self.calcularDeltaH()
         arrayZSRec370 = []
+
         for r in range(0,radiales):
-            #=REDONDEAR(
-            #           SI(CONTAR(C52:C55)=4;
-            #              Calcula_Distancia_370($E$42;
-            #                                    C53;
-            #                                    C54;
-            #                                    10*LOG10($C$44)+$C$45-SUMA($C$46:$D$48)-C$55);
-            #              0);1)
             h = self.tablas.tablaCotas_Valores['h1'][r]
+
             if (h < 0):
                 h = self.params.alturaAntenaTransmisora
+
             dh = self.deltaH[r]
             perdidas = self.params.perdidaCablesConectores + self.params.perdidaDivisorPotencia + self.params.otrasPerdidas
             P = 10 * Calculos.Log10(self.params.potencia) + self.params.ganancia - perdidas - self.params.perdidasLobulo[r]
-            
-            # limite de potencia radiada
-            #if P < -45:
-            #    P = -45
-            
             arrayZSRec370.append( self.Calcula_Distancia_370(self.params.intensidadCampoReferencia, h, dh, P) )
 
         return arrayZSRec370
@@ -49,29 +40,24 @@ class CalculosZona370():
         radiales = self.params.radiales
         for r in range(0,radiales):
             l = []
-            for d in range(21,101):  # valores de cotas desde 10 a 50 kms, 10kms = posicion 20, 50kms = posicion 100 de tabla de cotas
-                l.append( self.tablas.Matriz_Cotas(r,d) )
+            for d in range(41,201):  # valores de cotas desde 10 a 50 kms, 10kms = posicion 20, 50kms = posicion 100 de tabla de cotas
+                if (d % 2 == 0):
+                    l.append( self.tablas.Matriz_Cotas(r,d) )
             l.sort(reverse=True)
             self.deltaH.append( l[8] - l[73] )
 
-               
     def Calcula_Distancia_370(self, E, h, dh, P):
         Fca = 0 # Asignacion de valor por defecto
         #'Calcula la distancia a la que se produce una intensidad de campo E
         if (h > 1200):    #'MsgBox "Altura sobre el limite, se asumira hi = 1200 m", vbExclamation
             h = 1199.99
-            #'.txtAltura.Text = 1200
         if (h < 37.5):    #'MsgBox "Altura bajo el limite, se asumira hi = 37,5 m", vbExclamation
             h = 37.51
-            #'.txtAltura.Text = "37.5"
-            #'dh = Val(.txtDELTA.Text)
         if (dh > 1000):   #'MsgBox "Delta-H sobre el limite, se asumira Dh = 1000 m", vbExclamation
             dh = 999.99
-            #'.txtDELTA.Text = 1000
         if (dh < 10):     #'MsgBox "Delta-H bajo el limite, se asumira Dh = 10 m", vbExclamation
             dh = 10.01
-            #'.txtDELTA.Text = 10
-        #'p = Val(.txtPOTENCIA.Text)   'Considera factor de correccion por altura
+
         a0 = -16.36932424214
         a1 = 0.044802696567377
         a2 = -4.932965993005E-05
@@ -110,7 +96,6 @@ class CalculosZona370():
             C2 = 6.0466463402E-08 * h + 1.1540738699705E-03
             c3 = 1.97043439896E-10 * h - 1.2210493795046E-06
             c4 = 0.016756922176087 * h - 16.863003624777
-        #On Error Resume Next    ' Inicializa el controlador de error.
         try:
             d = 10
             d0 = 50
@@ -224,19 +209,7 @@ class CalculosZona370():
                 if not ((j < 45) and (abs(d - d0) > 0.000000000000001)):
                     break
             j = 0
-        '''
-        If Err.Number <> 0 Then
-            d = 10
-            campo = Campo_VHF(d, 600, dh, P, 0) - Fca
-            While ((Abs(campo - E) > 0.5) And (d >= 1))
-                d = d - 0.05
-                campo = Campo_VHF(d, 600, dh, P, 0) - Fca
-            Wend
-            If d < 1 Then
-                d = 1
-            End If
-        End If
-        '''
+
         return d
 
 
@@ -254,12 +227,7 @@ class CalculosZona370():
             dh = 10
         
         P = P - Fca   #'Considera factor de correccion por altura
-        #'a0 = -16.36932424214
-        #'a1 = 0.044802696567377
-        #'a2 = -4.932965993005E-05
-        #'a3 = 1.9371835269792E-08
-        #'a4 = 3.6643359351263
-        #'infl = a0 + a1 * dh + a2 * dh * dh + a3 * dh * dh * dh + a4 * Log(dh)
+
         if (dh >= 500): #'Delta H minimo es 10
             infl = 0.0104 * (dh - 500) + 18.5
         else:

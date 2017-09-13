@@ -139,7 +139,12 @@ elif(params.recomendacion == "370"):
     a370_m = Calculos.MultiplicaLista(a370, params.multiplo, params.radiales)
     distancias = tareasGeo.ListaAString(a370)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a370, params.radiales)
-    # suma_censal = tareasGeo.CapaCensal(x, y, a370, params.radiales)
+
+    # poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1546_m, params.radiales)
+    # suma_censal = tareasGeo.CapaCensal(x, y, poligono_interseccion, "Nacional_Rural_Datos") * factor_viviendas_rural
+    # suma_censal2 = tareasGeo.CapaCensal(x, y, poligono_interseccion, "Nacional_Urbano_Datos") * factor_viviendas_urbano
+    # suma_censal += suma_censal2
+    suma_censal = 3245#tareasGeo.CapaCensal(x, y, a370, params.radiales)
     #arcpy.SetParameter(24, "Calculado con recomendacion 370" )
 
 arcpy.SetParameter(21, poli)
