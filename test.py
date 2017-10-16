@@ -16,6 +16,7 @@ import CalculosZona370
 import OtrosCalculos as Calculos
 import os
 import arcpy
+import time
 
 ''' Inicio del proceso '''
 #arcpy.env.overwriteOutput = True
@@ -36,13 +37,16 @@ arcpy.env.workspace = sde_connection_file
 params.potencia = float(params.potencia)/1000
 tareasGeo = TareasGeometricas.TareasGeometricas()
 nubePuntos = tareasGeo.GeneraNubeDePuntos(params.latitud, params.longitud, params.imagen, params.resolucionCalculo, params.radiales)
-shp = ('Nube_{}_{}.shp'.format(3,2))
-#salida = os.path.join(arcpy.env.scratchFolder, shp)
+arcpy.AddMessage("----------------------------")
+# matrizCotas = tareasGeo.GeneraMatrizDeCotas(nubePuntos, params.resolucionCalculo)
+shp = ('Nube_{}.shp'.format(time.time()))
+# #salida = os.path.join(arcpy.env.scratchFolder, shp)
 salida = os.path.join("c:\env", shp)
 arcpy.AddMessage('Se genera {}'.format(salida))
 arcpy.CopyFeatures_management(nubePuntos, salida)
-# matrizCotas = tareasGeo.GeneraMatrizDeCotas(nubePuntos, params.resolucionCalculo)
-# arcpy.AddMessage(matrizCotas)
-# var = str(matrizCotas)
-# arcpy.AddMessage(var)
+# # matrizCotas = tareasGeo.GeneraMatrizDeCotas(nubePuntos, params.resolucionCalculo)
+# # arcpy.AddMessage(matrizCotas)
+# # var = str(matrizCotas)
+# # arcpy.AddMessage(var)
 arcpy.SetParameter(6, salida)
+arcpy.Delete_management(shp)

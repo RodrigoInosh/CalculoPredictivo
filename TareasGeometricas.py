@@ -53,6 +53,7 @@ class TareasGeometricas():
         ra = arcpy.BearingDistanceToLine_management(tb,tabla,"x","y","d","METERS","a","DEGREES","GEODESIC","",self.srWGS84)
         arcpy.AddMessage("Se calculan distancias")
         
+        # fcNube = arcpy.CreateFeatureclass_management("c:\env", "punto", "POINT", "", "DISABLED", "DISABLED",self.srWGS84, "")
         fcNube = arcpy.CreateFeatureclass_management("in_memory","punto","POINT","","DISABLED","ENABLED",self.srWGS84)
         arcpy.AddField_management(fcNube,"angulo","LONG")
         arcpy.AddField_management(fcNube,"distancia","LONG")
@@ -193,12 +194,16 @@ class TareasGeometricas():
         return poligonoZonaServicio
 
     def GeneraMatrizDeCotas(self, fcNube, resolucionCalculo):
+        arcpy.AddMessage("Generando Matriz de Cotas");
         tabla = []
         for d in range(0,201):
             reg = []
             w = "distancia=" + str(d*resolucionCalculo)
             cursor = arcpy.da.SearchCursor(fcNube, ["angulo", "distancia", "Z"],w,"","",("None","ORDER BY angulo")) 
             for row in cursor: 
+                # arcpy.AddMessage("angulo: {}".format(row[0]))
+                # arcpy.AddMessage("distancia: {}".format(row[1]))
+                # arcpy.AddMessage("Z: {}".format(row[2]))
                 # se controla en caso de que no se pueda recuperar cota desde imagen
                 try:
                     z = round(row[2],3)

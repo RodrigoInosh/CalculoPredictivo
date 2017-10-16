@@ -68,6 +68,8 @@ if(params.recomendacion == "1546-"):
     a1546_m = Calculos.MultiplicaLista(a1546, params.multiplo, params.radiales)
     distancias = tareasGeo.ListaAString(a1546_m)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546_m, params.radiales)
+
+    poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1546_m, params.radiales)
     # suma_censal = tareasGeo.CapaCensal(x, y, a1546_m, params.radiales)
     #arcpy.SetParameter(25, "Calculado con recomendacion 1546" )
     
@@ -81,6 +83,8 @@ elif(params.recomendacion == "1812"):
     dlt = calculo1812.dlt
     distancias = tareasGeo.ListaAString(a1812_m)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a1812_m, params.radiales)
+
+    poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1812_m, params.radiales)
     # suma_censal = tareasGeo.CapaCensal(x, y, a1812_m, params.radiales)
     #arcpy.SetParameter(25, "Calculado con recomendacion 1812" )
 
@@ -101,17 +105,17 @@ elif(params.recomendacion == "1546+"):
         a1546mas_m = Calculos.MultiplicaLista(a1546mas, params.multiplo, params.radiales)
         distancias = tareasGeo.ListaAString(a1546mas_m)
         poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546mas_m, params.radiales)
-        # suma_censal = tareasGeo.CapaCensal(x, y, a1546mas_m, params.radiales)
-        # tareasGeo.suma_censal(distancias)
-        #arcpy.SetParameter(25, "Calculado con recomendacion 1546+" )
+
+        poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1546mas_m, params.radiales)
     else:
         calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
         a1546 = calculo1546menos.Inicio_1546menos(params.radiales)
         # se multiplica, normalmente por 1 o por 1.3
         a1546_m = Calculos.MultiplicaLista(a1546, params.multiplo, params.radiales)
         distancias = tareasGeo.ListaAString(a1546_m)
-        poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, distancias, radiales)
         poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546_m, params.radiales)
+
+        poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1546_m, params.radiales)
         # suma_censal = tareasGeo.CapaCensal(x, y, a1546_m, params.radiales)
         # tareasGeo.suma_censal(distancias)
         #arcpy.SetParameter(25, "Calculado con recomendacion 1546-" )
@@ -126,11 +130,7 @@ elif(params.recomendacion == "1546"):
     distancias = tareasGeo.ListaAString(a1546_m)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546_m, params.radiales)
     poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1546_m, params.radiales)
-    
-    suma_censal = tareasGeo.CapaCensal(x, y, poligono_interseccion, "Nacional_Rural_Datos") * factor_viviendas_rural
-    suma_censal2 = tareasGeo.CapaCensal(x, y, poligono_interseccion, "Nacional_Urbano_Datos") * factor_viviendas_urbano
-    # arcpy.SetParameter(25, "Calculado con recomendacion 1546-" )
-    suma_censal += suma_censal2
+
 elif(params.recomendacion == "370"):
     arcpy.AddMessage("Calculos para recomendacion 370")
     calculo370 = CalculosZona370.CalculosZona370(params, tablaValores)
@@ -140,12 +140,11 @@ elif(params.recomendacion == "370"):
     distancias = tareasGeo.ListaAString(a370)
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a370, params.radiales)
 
-    # poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1546_m, params.radiales)
-    # suma_censal = tareasGeo.CapaCensal(x, y, poligono_interseccion, "Nacional_Rural_Datos") * factor_viviendas_rural
-    # suma_censal2 = tareasGeo.CapaCensal(x, y, poligono_interseccion, "Nacional_Urbano_Datos") * factor_viviendas_urbano
-    # suma_censal += suma_censal2
-    suma_censal = 3245#tareasGeo.CapaCensal(x, y, a370, params.radiales)
-    #arcpy.SetParameter(24, "Calculado con recomendacion 370" )
+    poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a370, params.radiales)
+
+suma_censal = tareasGeo.CapaCensal(x, y, poligono_interseccion, "Nacional_Rural_Datos") * factor_viviendas_rural
+suma_censal2 = tareasGeo.CapaCensal(x, y, poligono_interseccion, "Nacional_Urbano_Datos") * factor_viviendas_urbano
+suma_censal = suma_censal + suma_censal2
 
 arcpy.SetParameter(21, poli)
 arcpy.SetParameter(22, nubePuntos)
