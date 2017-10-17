@@ -1,8 +1,8 @@
 # -*- coding: iso-8859-15 -*-
 '''
-Created on 12-02-2014
+Created on 16/10/2017
 
-@author: CRodriguez
+@author: Kimie Cortés
 '''
 import math
 import OtrosCalculos as Calculos
@@ -19,12 +19,8 @@ class CalculosZona1546menos():
     def Inicio_1546menos(self, radiales):
         arrayZSRec1546menos = []
         for k in range(0,radiales):
-            extension = self.Calcula_Distancia_1546menos(k*360/radiales)
-            #Se agrega restriccion solo para tv
-            if (extension > 1):
-                arrayZSRec1546menos.append( extension )
-            else:
-                arrayZSRec1546menos.append( 1 )
+            extension = self.Calcula_Distancia_1546menos(k*(360/radiales))
+            arrayZSRec1546menos.append(extension)
             #print "{}:{}".format(k*20,extension)
         
         print "listo"
@@ -34,7 +30,7 @@ class CalculosZona1546menos():
     def Calcula_Distancia_1546menos(self, degRadial):
         E = self.params.intensidadCampoReferencia
         F = self.params.frecuencia
-        if (F < 600):
+        if (F <= 600):
             Finf = 100
             Fsup = 600
         else:
@@ -49,14 +45,13 @@ class CalculosZona1546menos():
         sombra = round(self.params.toleranciaZonasSombra, 2)
         key = 0
         cotaLim = 100 * salto
-        theta1 = 0
         saltoangular = 360 / self.params.radiales
         #pt = param.porcentajeTiempo
         pl = self.params.porcentajeUbicacion
         
         while (key <= 2*sombra):
             Ec0 = Ec
-            d = d + (0.5 * salto)           
+            d = d + (0.5 * salto)            
             #Calculo de altura efectiva en funcion del trayecto
             h1 = self.tablas.tablaCotas_Valores['h1'][degRadial/saltoangular]
             him = self.tablas.tablaCotas_Valores['him'][degRadial/saltoangular]
@@ -69,13 +64,13 @@ class CalculosZona1546menos():
             h1d = h1 + him - himd
             
             if (h1d >= 10):
-                Eh1inf = self.Campo_1546(d, h1d, Finf)
-                Eh1sup = self.Campo_1546(d, h1d, Fsup)
+                Eh1inf = self.Campo_1546menos(d, h1d, Finf)
+                Eh1sup = self.Campo_1546menos(d, h1d, Fsup)
             else:
-                E10inf = self.Campo_1546(d, 10, Finf)
-                E20inf = self.Campo_1546(d, 20, Finf)
-                E10sup = self.Campo_1546(d, 10, Fsup)
-                E20sup = self.Campo_1546(d, 20, Fsup)
+                E10inf = self.Campo_1546menos(d, 10, Finf)
+                E20inf = self.Campo_1546menos(d, 20, Finf)
+                E10sup = self.Campo_1546menos(d, 10, Fsup)
+                E20sup = self.Campo_1546menos(d, 20, Fsup)
                 v1 = ((1.35 * math.atan(1/900))-0.1)
                 Ezeroa = Calculos.Log10(math.sqrt(v1**2 + 1) + v1)
                 Ezeroinf = E10inf + 0.5 * (E10inf - E20inf + (6.03 - (6.9 + 20 * Ezeroa)))
@@ -85,7 +80,7 @@ class CalculosZona1546menos():
                     Eh1inf = Ezeroinf + 0.1 * h1d * (E10inf - Ezeroinf)
                     Eh1sup = Ezerosup + 0.1 * h1d * (E10sup - Ezerosup)
                 else:
-                    theta1 = self.tablas.tablaCotas_ADT_Maximos[degRadial/saltoangular]
+                    theta1 = self.tablas.tablaCotas_ADT_Maximos[degRadial/20]
                     v1 = ((0.036 * math.sqrt(Finf)) - 0.1)
                     Eh1ainf = Calculos.Log10(math.sqrt((v1**2) + 1) + v1)
                     #Eh1ainf = Log10(Sqr((((0.036 * Sqr(Finf)) - 0.1) ^ 2) + 1) + (0.036 * Sqr(Finf)) - 0.1)
@@ -120,7 +115,7 @@ class CalculosZona1546menos():
             
             Fcp = 10 * Calculos.Log10(P) + G - (PC + Plob)
             
-            # limite de potencia radiada RESTRICCION OJO
+            # limite de potencia radiada
             if Fcp < -45:
                 Fcp = -45
             
@@ -143,13 +138,12 @@ class CalculosZona1546menos():
                 #FcR = (6.03 - (6.9 + 20 * Calculos.Log10(math.sqrt((((0.0108 * math.sqrt(F) * math.sqrt((Rcd - h2) * math.atan((20 - h2) / 27))) - 0.1) ** 2) + 1) + (0.0108 * math.sqrt(F) * math.sqrt((Rcd - h2) * math.atan((Rcd - h2) / 27))) - 0.1)))
             
             #Factor de correccion trayectos urbanos
-            h1s = self.params.alturaAntenaTransmisora
             if (d <= 15):
                 if ((h1d > 10) and ((h1d - Rcd) < 150)):
-                    if ((1 + h1s - Rcd) < 0):
+                    if ((1 + h1d - Rcd) < 0):
                         FcU = 0
                     else:
-                        FcU = -3.3 * Calculos.Log10(F) * (1 - 0.85 * Calculos.Log10(d)) * (1 - 0.46 * Calculos.Log10(1 + h1s - Rcd))
+                        FcU = -3.3 * Calculos.Log10(F) * (1 - 0.85 * Calculos.Log10(d)) * (1 - 0.46 * Calculos.Log10(1 + h1d - Rcd))
                 else:
                     FcU = 0
             else:
@@ -165,7 +159,7 @@ class CalculosZona1546menos():
                 h2s = self.tablas.Matriz_Cotas(degRadial/saltoangular, cotaLim/salto*2) + h2
                 theta2 = self.Angulo_Receptor(cotaLim, degRadial, h2)
             
-            thetar = math.atan((self.tablas.Matriz_Cotas(0,0) + h1s - h2s) / (1000*d))
+            thetar = math.atan((self.tablas.Matriz_Cotas(0,0) + self.params.alturaAntenaTransmisora - h2s) / (1000*d))
             
             if ((theta2 - thetar) < 40):
                 if ((theta2 - thetar) <= 0.55):
@@ -178,8 +172,6 @@ class CalculosZona1546menos():
             if (tca == 0):
                 FcAR = 0
             else:
-                if (h1d < 0):
-                    tca = theta1
                 v5 = ((0.036 * math.sqrt(F)) - 0.1)
                 FcARa = Calculos.Log10(math.sqrt((v5 ** 2) + 1) + v5)
                 v6 = ((0.065 * tca * math.sqrt(F)) - 0.1)
@@ -190,20 +182,12 @@ class CalculosZona1546menos():
     
             #Variabilidad segun las predicciones de cobertura terrestre zonal
             if (pl > 50):
-                #sigmaloc = 1.2 + 1.3 * Calculos.Log10(F)
+                sigmaloc = 1.2 + 1.3 * Calculos.Log10(F)
                 #1.2 antenas Rx urbanas por debajo del obstaculo
                 #1.0 antenas Rx urbanas cerca del obstaculo
                 #0.5 antenas Rx rural
-                #Ec = Ec + Calculos.Log_Normal(pl/100) * sigmaloc
-                #Correcion -7 solo para calculos tv digitales
-                if (F > 300): #Rango digital entre 512 MHz al 698 Mhz
-                    Ec = Ec - 7 #7.0 digital/ 10.6 analogo<300/ 12.2 analogo>300
-                else: #Rango analogo entre 54 MHz y 216 MHz
-                    #if (F <= 300):
-                    Ec = Ec - 10.6
-                    #else:
-                    #    Ec = Ec - 12.2
-                    
+                Ec = Ec + Calculos.Log_Normal(pl/100) * sigmaloc
+            
             if (Ec > E):
                 key = 0
             else:
@@ -212,11 +196,11 @@ class CalculosZona1546menos():
                         #dnf = (10 ^ (0.1 * (G - 2.15))) / (10 * F)
                         #d0 = (10 ^ ((110.9 + Fcp) / 40)) / 100
                         E01 = 106.9 - 20 * Calculos.Log10(0.1)
-                        E1 = self.Campo_1546(1, h1d, Finf)
+                        E1 = self.Campo_1546menos(1, h1d, Finf)
                         d0 = (0.1 * 10 ** ((Ec - E01) / (E1 - E01))) / 100
                     else:
                         d0 = (d - 0.5 * salto) * 10 ** ((Calculos.Log10(d / (d - 0.5 * salto))) * (E - Ec) / (Ec0 - Ec))
-                #arcpy.AddMessage(Ec) #prueba
+                    
                 key = key + 1
             if (d >= (200*salto)):
                 d0 = d
@@ -225,7 +209,7 @@ class CalculosZona1546menos():
 
        
     # Calcula la intensidad de campo que se obtiene a la distancia d de la estacion
-    def Campo_1546(self, distancia, altura, frecuencia):
+    def Campo_1546menos(self, distancia, altura, frecuencia):
         #Esup = Land50[1][0] #Cells(4, 4).Value
         #Einf = Land50[1][0] #Cells(4, 4).Value
         #hsup = Land50[0][0] #Cells(3, 4).Value

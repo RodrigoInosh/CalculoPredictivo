@@ -1,8 +1,8 @@
 # -*- coding: iso-8859-15 -*-
 '''
-Created on 29/12/2015
+Created on 16/10/2017
 
-@author: kimie
+@author: Kimie Cortés
 '''
 import arcpy
 import ParametrosFormulario
@@ -145,23 +145,23 @@ for row in cursor:
         
         if ( params.recomendacion == "1546-" ):
             arcpy.AddMessage("Calculos para recomendacion 1546-")
-            # Calculos para recomendacion 1546
-            calculo1546 = CalculosZona1546.CalculosZona1546(params, tablaValores)
-            a1546 = calculo1546.Inicio_1546(params.radiales)
-            distancias = calculo1546.Inicio_1546(params.radiales)
+            # Calculos para recomendacion 1546 fm
+            calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
+            a1546 = calculo1546menos.Inicio_1546menos(params.radiales)
+            distancias = calculo1546menos.Inicio_1546menos(params.radiales)
         
         if ( params.recomendacion == "1812" ):
             arcpy.AddMessage("Calculos para recomendacion 1812")
-            # Calculos para recomendacion 1546
+            # Calculos para recomendacion 1812
             calculo1812 = CalculosZona1812.CalculosZona1812(params, tablaValores)
             a1812 = calculo1812.Inicio_1812(params.radiales)
             distancias = calculo1812.Inicio_1812(params.radiales)
                              
         if ( params.recomendacion == "1546+" ):
             arcpy.AddMessage("Calculos para recomendacion 1546+")
-            # Calculos para recomendacion 1546
-            calculo1546 = CalculosZona1546.CalculosZona1546(params, tablaValores)
-            a1546 = calculo1546.Inicio_1546(params.radiales)
+            # Calculos para recomendacion 1546 fm
+            calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
+            a1546 = calculo1546menos.Inicio_1546menos(params.radiales)
             # Calculos para recomendacion 1812
             if(params.radiales == 18):
                 calculo1812 = CalculosZona1812.CalculosZona1812(params, tablaValores)
@@ -170,20 +170,21 @@ for row in cursor:
                 # Calculos para recomendacion 1546+
                 calculo1546mas = CalculosZona1546mas.CalculosZona1546mas(params, a1546, a1812, dlt)
                 distancias = calculo1546mas.Inicio_1546mas(params.radiales)
-            else:
-                calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
-                a1546 = calculo1546menos.Inicio_1546menos(params.radiales)
-                distancias = calculo1546menos.Inicio_1546menos(params.radiales)
+            else: #quedó fijado en 1546 tv para cualquier calculo con 72 radiales
+                calculo1546 = CalculosZona1546.CalculosZona1546(params, tablaValores)
+                a1546 = calculo1546.Inicio_1546(params.radiales)
+                distancias = calculo1546.Inicio_1546(params.radiales)
 
         if ( params.recomendacion == "1546" ):
-            arcpy.AddMessage("Calculos para recomendacion 1546")
-            # Calculos para recomendacion 1546
-            calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
-            a1546 = calculo1546menos.Inicio_1546menos(params.radiales)
-            distancias = calculo1546menos.Inicio_1546menos(params.radiales)
+            arcpy.AddMessage("Calculos para recomendacion 1546tv")
+            # Calculos para recomendacion 1546 tv
+            calculo1546 = CalculosZona1546.CalculosZona1546(params, tablaValores)
+            a1546 = calculo1546.Inicio_1546(params.radiales)
+            distancias = calculo1546.Inicio_1546(params.radiales)
                 
         if ( params.recomendacion == "370" ):
             arcpy.AddMessage("Calculos para recomendacion 370")
+            # Calculos para recomendacion 370
             calculo370 = CalculosZona370.CalculosZona370(params, tablaValores)
             distancias = calculo370.Inicio_370(params.radiales)
         
