@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 '''
 Created on 12-02-2014
 
@@ -108,12 +108,18 @@ class TablaValores():
                 for t in range(30,151):   #15km a 75km
                     suma = suma + self.Matriz_Cotas(r, t)
                 him.append(suma / 120)
+        elif (B4 == 0.5):
+            for r in range(0,radiales):
+                suma = 0
+                for t in range(12,61):   #calculo370
+                    suma = suma + self.Matriz_Cotas(r, t)
+                him.append(suma / 48)
         else:
             for r in range(0,radiales):
                 suma = 0
-                for t in range(60,201):   #30km a 100km
+                for t in range(40 + 20*(0.1/B4)**2, 201):   #30km a 100km
                     suma = suma + self.Matriz_Cotas(r, t)
-                him.append(suma / 171)
+                him.append(suma / (160-20*(0.1/B4)**2))
         
         ho = self.Matriz_Cotas(0,0)   #valor de la cota 0
         hot = self.params.alturaAntenaTransmisora

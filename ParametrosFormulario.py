@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 '''
 Created on 12-02-2014
 
@@ -28,7 +28,7 @@ class ParametrosFormulario:
     _porcentajeUbicacion = 90
     _frecuencia = 99.3
     _intensidadCampoReferencia = 48
-    _imagen = "" #"c:\\arcgisserver\\Subtel2.sde\\Subtel2_prod.SUBTEL2.Imagen"
+    _imagen = "ARCGIS.CR_Imagen" #"c:\\arcgisserver\\Subtel2.sde\\Subtel2_prod.SUBTEL2.Imagen"
     _multiplo = 1
         
     def __init__(self):
@@ -44,7 +44,7 @@ class ParametrosFormulario:
         self.perdidaCablesConectores = self._perdidaCablesConectores
         self.perdidaDivisorPotencia = self._perdidaDivisorPotencia
         self.otrasPerdidas = self._otrasPerdidas
-        self.radiales = self._radiales        
+        self.radiales = self._radiales
         self.perdidasLobulo = self._perdidasLobulo
         self.obstaculosCircundantesTx = self._obstaculosCircundantesTx
         self.obstaculosCircundantesRx = self._obstaculosCircundantesRx
@@ -84,64 +84,64 @@ class ParametrosFormulario:
         
         if self.ganancia == '#' or not self.ganancia:
             self.ganancia = self._ganancia
-            
+
         if self.alturaAntenaTransmisora == '#' or not self.alturaAntenaTransmisora:
             self.alturaAntenaTransmisora = self._alturaAntenaTransmisora
-            
+
         if self.alturaAntenaReceptora == '#' or not self.alturaAntenaReceptora:
             self.alturaAntenaReceptora = self._alturaAntenaReceptora    
-            
+
         if self.latitud == '#' or not self.latitud:
             self.latitud = self._latitud  
-            
+
         if self.longitud == '#' or not self.longitud:
             self.longitud = self._longitud  
-            
+
         if self.perdidaCablesConectores == '#' or not self.perdidaCablesConectores:
             self.perdidaCablesConectores = self._perdidaCablesConectores  
-            
+
         if self.perdidaDivisorPotencia == '#' or not self.perdidaDivisorPotencia:
             self.perdidaDivisorPotencia = self._perdidaDivisorPotencia  
-            
+
         if self.otrasPerdidas == '#' or not self.otrasPerdidas:
             self.otrasPerdidas = self._otrasPerdidas
-                                
+
         if self.radiales == '#' or not self.radiales:
-            self.radiales = self._radiales        
-  
+            self.radiales = self._radiales
+
         if self.perdidasLobulo == '#' or not self.perdidasLobulo:
             self.perdidasLobulo = self._perdidasLobulo
-            
+
         if self.obstaculosCircundantesTx == '#' or not self.obstaculosCircundantesTx:
             self.obstaculosCircundantesTx = self._obstaculosCircundantesTx
-            
+
         if self.obstaculosCircundantesRx == '#' or not self.obstaculosCircundantesRx:
             self.obstaculosCircundantesRx = self._obstaculosCircundantesRx
-            
+
         if self.toleranciaZonasSombra == '#' or not self.toleranciaZonasSombra:
             self.toleranciaZonasSombra = self._toleranciaZonasSombra
 
         if self.resolucionCalculo == '#' or not self.resolucionCalculo:
             self.resolucionCalculo = self._resolucionCalculo
-            
+
         if self.porcentajeTiempo == '#' or not self.porcentajeTiempo:
             self.porcentajeTiempo = self._porcentajeTiempo
-            
+
         if self.porcentajeUbicacion == '#' or not self.porcentajeUbicacion:
             self.porcentajeUbicacion = self._porcentajeUbicacion
-            
+
         if self.frecuencia == '#' or not self.frecuencia:
             self.frecuencia = self._frecuencia
-            
+
         if self.intensidadCampoReferencia == '#' or not self.intensidadCampoReferencia:
             self.intensidadCampoReferencia = self._intensidadCampoReferencia    
-            
+
         if self.imagen == '#' or not self.imagen:
             self.imagen = self._imagen  
-             
+
         if self.multiplo == '#' or not self.multiplo:
             self.multiplo = self._multiplo  
-                        
+
     def imprimeParametros(self, radiales):
         arcpy.AddMessage("Recomendacion: {}".format(self.recomendacion))
         arcpy.AddMessage("Potencia: {}".format(self.potencia))
@@ -191,4 +191,3 @@ class ParametrosFormulario:
         r+= str(self.intensidadCampoReferencia) + "\n"
         r+= str(self.multiplo) + "\n"
         return r
-        

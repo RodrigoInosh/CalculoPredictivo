@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 '''
 Created on 16/10/2017
 
-@author: Kimie Cortés
+@author: Kimie Cortes
 '''
 import math
 import OtrosCalculos as Calculos

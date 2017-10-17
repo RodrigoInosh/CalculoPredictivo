@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 '''
 Created on 13-10-2017
 
-@author: Kimie Cortés
+@author: Kimie Corts
 '''
 import math
 import OtrosCalculos as Calculos
@@ -20,11 +20,14 @@ class CalculosZona370():
     def Inicio_370(self, radiales):
         self.calcularDeltaH()
         arrayZSRec370 = []
+
         for r in range(0,radiales):
 
             h = self.tablas.tablaCotas_Valores['h1'][r]
+
             if (h < 0):
                 h = self.params.alturaAntenaTransmisora
+
             dh = self.deltaH[r]
             perdidas = self.params.perdidaCablesConectores + self.params.perdidaDivisorPotencia + self.params.otrasPerdidas
             P = 10 * Calculos.Log10(self.params.potencia) + self.params.ganancia - perdidas - self.params.perdidasLobulo[r]
@@ -50,21 +53,16 @@ class CalculosZona370():
             l.sort(reverse=True)
             self.deltaH.append( l[8] - l[73] ) #KCS No cambia posiciones
 
-               
     def Calcula_Distancia_370(self, E, h, dh, P):
         Frec = self.params.frecuencia
         Fca = 0 # Asignacion de valor por defecto
         #'Calcula la distancia a la que se produce una intensidad de campo E
         if (h > 1200):    #'MsgBox "Altura sobre el limite, se asumira hi = 1200 m", vbExclamation
             h = 1199.99
-            #'.txtAltura.Text = 1200
         if (h < 37.5):    #'MsgBox "Altura bajo el limite, se asumira hi = 37,5 m", vbExclamation
             h = 37.51
-            #'.txtAltura.Text = "37.5"
-            #'dh = Val(.txtDELTA.Text)
         if (dh > 1000):   #'MsgBox "Delta-H sobre el limite, se asumira Dh = 1000 m", vbExclamation
             dh = 999.99
-            #'.txtDELTA.Text = 1000
         if (dh < 10):     #'MsgBox "Delta-H bajo el limite, se asumira Dh = 10 m", vbExclamation
             dh = 10.01
             #'.txtDELTA.Text = 10
@@ -271,7 +269,7 @@ class CalculosZona370():
         #elif (dh < 10):
         #    dh = 10.01
         
-        if ((dh >= 9.9) and (dh < 30)): #delta h mínmo es 10
+        if ((dh >= 9.9) and (dh < 30)): #delta h mnmo es 10
             infl = -15 + 0.55 * dh - 0.005 * dh * dh
         if ((dh >= 30) and (dh < 80)):
             infl = -8 + 0.176667 * dh - 0.000333333 * dh * dh
@@ -362,7 +360,7 @@ class CalculosZona370():
         
         #P = P - Fca   #'Considera factor de correccion por altura
 
-        if ((dh >= 9.9) and (dh < 30)): #delta h mínmo es 10
+        if ((dh >= 9.9) and (dh < 30)): #delta h mnmo es 10
             infl = -15 + 0.55 * dh - 0.005 * dh * dh
         if ((dh >= 30) and (dh < 80)):
             infl = -8 + 0.176667 * dh - 0.000333333 * dh * dh

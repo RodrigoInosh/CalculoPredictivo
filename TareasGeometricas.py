@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 '''
 Created on 14-02-2014
 Modificated on 26-01-2015
@@ -13,6 +13,7 @@ import os
 class TareasGeometricas(): 
     srWGS84 = arcpy.SpatialReference(4326)   #GCS_WGS_84
     srWebMercator = arcpy.SpatialReference(3857)  #WGS_1984_Web_Mercator_Auxiliary_Sphere
+    poligono_servicio = ""
     
     # EPSG 3854 = wkid 102100
     # EPSG 3854 para esri
@@ -52,6 +53,7 @@ class TareasGeometricas():
         ra = arcpy.BearingDistanceToLine_management(tb,tabla,"x","y","d","METERS","a","DEGREES","GEODESIC","",self.srWGS84)
         arcpy.AddMessage("Se calculan distancias")
         
+        # fcNube = arcpy.CreateFeatureclass_management("c:\env", "punto", "POINT", "", "DISABLED", "DISABLED",self.srWGS84, "")
         fcNube = arcpy.CreateFeatureclass_management("in_memory","punto","POINT","","DISABLED","ENABLED",self.srWGS84)
         arcpy.AddField_management(fcNube,"angulo","LONG")
         arcpy.AddField_management(fcNube,"distancia","LONG")
@@ -89,6 +91,35 @@ class TareasGeometricas():
         del seCur
 
         return fcNube
+
+    def CapaCensal(self, x, y, poligono, capa_censal):
+        arcpy.AddMessage("---Capa censal---")
+
+        suma_censal = 0
+        # poligono = self.GeneraPoligonoInterseccion(x, y, distancias, radiales)
+        # arcpy.env.workspace = "c:\env\Nacional.gdb"
+        # intersectOutput = "capa_interseccion"
+        intersectOutput = arcpy.CreateFeatureclass_management("in_memory", "FC", "POLYGON")
+        arcpy.env.outputZFlag = "Disabled"
+        arcpy.env.outputMFlag = "Disabled"
+        # inFeatures = [poligono, "Valparaiso_Modificado"]
+        inFeatures = [poligono, capa_censal]
+        arcpy.Intersect_analysis(inFeatures, intersectOutput, "ALL")
+
+        # desc = arcpy.Describe(capa_censal)
+        # tipo = desc.shapeType
+        # arcpy.AddMessage("tipo")
+        # arcpy.AddMessage(tipo)
+
+        cursor = arcpy.SearchCursor(intersectOutput)
+        # suma_censal = 0
+        count_rows = 0
+        for row in cursor:
+            suma_censal += float(row.getValue("TOT_VIV"))
+            count_rows+=1
+
+        # suma_censal = 10
+        return suma_censal
     
     # Input: posicion central(longitud,latitud), lista de distancias
     # Output: poligono
@@ -101,7 +132,7 @@ class TareasGeometricas():
         arcpy.AddField_management(tb,"d","LONG")
         cursor = arcpy.da.InsertCursor(tb, ["x","y","a","d"])
         #radiales1 = int(radiales)
-        #radiales = self.params.radiales                                       
+        #radiales = self.params.radiales
         # Se omite el punto centrar, provoca errores en BearingDistanceToLine
         if len(distancias) == 1: # si hay solo un valor se asume que es el radio
             for a in range(0,360):
@@ -109,7 +140,7 @@ class TareasGeometricas():
         else:  
             for a in range(0,radiales):
                 cursor.insertRow((longitud,latitud,a*(360/radiales),distancias[a],))
-        del cursor              
+        del cursor
         arcpy.AddMessage("Se creo tabla temporal para calculo de ubicacion de puntos")
         
         tabla = os.path.join(arcpy.env.scratchGDB, 'tabla_distancias2')
@@ -131,17 +162,17 @@ class TareasGeometricas():
     def GeneraCapaPoligonos(self, x, y, distancias, radiales):
         fcPoli = arcpy.CreateFeatureclass_management("in_memory","area","POLYGON","","DISABLED","DISABLED",self.srWGS84)
         arcpy.AddField_management(fcPoli, 'area', 'DOUBLE')
-        cursor = arcpy.da.InsertCursor(fcPoli,["SHAPE@"])                                                      #AQUI(3,3)!!!!
+        cursor = arcpy.da.InsertCursor(fcPoli,["SHAPE@"])
         #radiales = self.params.radiales
         poli = self.GeneraPoligono2(x, y, [distancias[r]*1000 for r in range(0,radiales)], radiales)    
-        poli2 = self.GeneraPoligono2(x, y, [distancias[r]*1300 for r in range(0,radiales)], radiales)  
-            
+        poli2 = self.GeneraPoligono2(x, y, [distancias[r]*1300 for r in range(0,radiales)], radiales)
+
         cursor.insertRow(tuple([poli]))
         cursor.insertRow(tuple([poli2]))
         del cursor
         
         arcpy.CalculateField_management(fcPoli,'area','!shape.area@squarekilometers!','PYTHON')
-        
+
         return fcPoli
     '''
     **************************************************************************************************************
@@ -149,13 +180,30 @@ class TareasGeometricas():
     **************************************************************************************************************
     '''
 
+    def GeneraPoligonoInterseccion(self, x, y, distancias, radiales):
+        poligonoZonaServicio = arcpy.CreateFeatureclass_management("in_memory","area","POLYGON","","DISABLED","DISABLED",self.srWGS84)
+        arcpy.AddField_management(poligonoZonaServicio, 'area', 'DOUBLE')
+        cursor = arcpy.da.InsertCursor(poligonoZonaServicio,["SHAPE@"])
+        poli = self.GeneraPoligono2(x, y, [distancias[r]*1000 for r in range(0,radiales)], radiales)
+
+        cursor.insertRow(tuple([poli]))
+        del cursor
+        
+        arcpy.CalculateField_management(poligonoZonaServicio,'area','!shape.area@squarekilometers!','PYTHON')
+
+        return poligonoZonaServicio
+
     def GeneraMatrizDeCotas(self, fcNube, resolucionCalculo):
+        arcpy.AddMessage("Generando Matriz de Cotas");
         tabla = []
         for d in range(0,201):
             reg = []
             w = "distancia=" + str(d*resolucionCalculo)
             cursor = arcpy.da.SearchCursor(fcNube, ["angulo", "distancia", "Z"],w,"","",("None","ORDER BY angulo")) 
             for row in cursor: 
+                # arcpy.AddMessage("angulo: {}".format(row[0]))
+                # arcpy.AddMessage("distancia: {}".format(row[1]))
+                # arcpy.AddMessage("Z: {}".format(row[2]))
                 # se controla en caso de que no se pueda recuperar cota desde imagen
                 try:
                     z = round(row[2],3)
@@ -247,4 +295,3 @@ class TareasGeometricas():
         #arcpy.AddSurfaceInformation_3d(fcNube,imagen,"Z","BILINEAR")
     #    arcpy.AddMessage("Se obtuvieron las alturas para los puntos")
     #    return fcNube  
-        
