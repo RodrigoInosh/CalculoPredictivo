@@ -62,8 +62,8 @@ x, y = tareasGeo.CentroDeNube(nubePuntos)
 if(params.recomendacion == "1546-"):
     # Calculos para recomendacion 1546
     arcpy.AddMessage("Calculos para recomendacion 1546-")
-    calculo1546 = CalculosZona1546.CalculosZona1546(params, tablaValores)
-    a1546 = calculo1546.Inicio_1546(params.radiales)
+    calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
+    a1546 = calculo1546menos.Inicio_1546menos(params.radiales)
     # se multiplica, normalmente por 1 o por 1.3
     a1546_m = Calculos.MultiplicaLista(a1546, params.multiplo, params.radiales)
     distancias = tareasGeo.ListaAString(a1546_m)
@@ -91,8 +91,8 @@ elif(params.recomendacion == "1812"):
 elif(params.recomendacion == "1546+"):
     arcpy.AddMessage("Calculos para recomendacion 1546+")
     # Calculos para recomendacion 1546
-    calculo1546 = CalculosZona1546.CalculosZona1546(params, tablaValores)
-    a1546 = calculo1546.Inicio_1546(params.radiales)
+    calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
+    a1546 = calculo1546menos.Inicio_1546menos(params.radiales)
     # Calculos para recomendacion 1812
     if(params.radiales == 18):
         calculo1812 = CalculosZona1812.CalculosZona1812(params, tablaValores)
@@ -108,8 +108,8 @@ elif(params.recomendacion == "1546+"):
 
         poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1546mas_m, params.radiales)
     else:
-        calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
-        a1546 = calculo1546menos.Inicio_1546menos(params.radiales)
+        calculo1546 = CalculosZona1546.CalculosZona1546(params, tablaValores)
+        a1546 = calculo1546.Inicio_1546(params.radiales)
         # se multiplica, normalmente por 1 o por 1.3
         a1546_m = Calculos.MultiplicaLista(a1546, params.multiplo, params.radiales)
         distancias = tareasGeo.ListaAString(a1546_m)
@@ -120,11 +120,11 @@ elif(params.recomendacion == "1546+"):
         # tareasGeo.suma_censal(distancias)
         #arcpy.SetParameter(25, "Calculado con recomendacion 1546-" )
 
-elif(params.recomendacion == "1546"):
-    # Calculos para recomendacion 1546
+if(params.recomendacion == "1546"):
+    # Calculos para recomendacion 1546 TVD
     arcpy.AddMessage("Calculos para recomendacion 1546")
-    calculo1546menos = CalculosZona1546menos.CalculosZona1546menos(params, tablaValores)
-    a1546 = calculo1546menos.Inicio_1546menos(params.radiales)
+    calculo1546 = CalculosZona1546.CalculosZona1546(params, tablaValores)
+    a1546 = calculo1546.Inicio_1546(params.radiales)
     # se multiplica, normalmente por 1 o por 1.3
     a1546_m = Calculos.MultiplicaLista(a1546, params.multiplo, params.radiales)
     distancias = tareasGeo.ListaAString(a1546_m)
