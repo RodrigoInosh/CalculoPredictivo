@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 '''
 Created on 13-10-2017
 
-@author: Kimie Cort�s
+@author: Kimie Corts
 '''
 import math
 import OtrosCalculos as Calculos
@@ -269,7 +269,7 @@ class CalculosZona370():
         #elif (dh < 10):
         #    dh = 10.01
         
-        if ((dh >= 9.9) and (dh < 30)): #delta h m�nmo es 10
+        if ((dh >= 9.9) and (dh < 30)): #delta h mnmo es 10
             infl = -15 + 0.55 * dh - 0.005 * dh * dh
         if ((dh >= 30) and (dh < 80)):
             infl = -8 + 0.176667 * dh - 0.000333333 * dh * dh
@@ -360,7 +360,7 @@ class CalculosZona370():
         
         #P = P - Fca   #'Considera factor de correccion por altura
 
-        if ((dh >= 9.9) and (dh < 30)): #delta h m�nmo es 10
+        if ((dh >= 9.9) and (dh < 30)): #delta h mnmo es 10
             infl = -15 + 0.55 * dh - 0.005 * dh * dh
         if ((dh >= 30) and (dh < 80)):
             infl = -8 + 0.176667 * dh - 0.000333333 * dh * dh
