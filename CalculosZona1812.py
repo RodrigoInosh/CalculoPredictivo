@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-15 -*-
 '''
-Created on 13-02-2014
+Created on 16/10/2017
 
-@author: CRodriguez
+@author: Kimie Cortes
 '''
 import math
 import OtrosCalculos as Calculos
@@ -38,7 +38,7 @@ class CalculosZona1812():
         E = self.params.intensidadCampoReferencia
         F = self.params.frecuencia / 1000
         d0 = 0  # se asigna por defecto
-        #Pi = 3.14159265358979
+        Pi = 3.14159265358979
         d = 0 #Distancia_1812(E, s, numCurva)
         Ec = 106.9 #Campo_1812(d, h1d, numCurva)
         salto = round(self.params.resolucionCalculo/500, 2)
@@ -291,7 +291,7 @@ class CalculosZona1812():
             Kh2 = 21.8 + 6.2 * Calculos.Log10(F)
             
             hdift = Rt - htg
-            thetaclut = math.atan(float(hdift)/27)
+            thetaclut = (180 / Pi) * math.atan(float(hdift)/27) #cambio08
             vt = Knu * math.sqrt(abs(hdift*thetaclut))
             if (htg < Rt):
                 if (Rt == 10):
@@ -302,7 +302,7 @@ class CalculosZona1812():
                 Aht = 0
             
             hdifr = Rr - hrg
-            thetaclur = math.atan(float(hdifr)/27)
+            thetaclur = (180 / Pi) * math.atan(float(hdifr)/27) #cambio09
             vr = Knu * math.sqrt(abs(hdifr*thetaclur))
             if (hrg < Rr):
                 if (Rr == 10):
@@ -579,5 +579,3 @@ class CalculosZona1812():
                 hmmax = hm
             s = s + 0.5 * salto
         return hmmax   #'rugosidad del terreno
-
-

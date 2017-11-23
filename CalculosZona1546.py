@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-15 -*-
 '''
 Created on 16/10/2017
 
@@ -37,11 +37,18 @@ class CalculosZona1546():
         if (F < 600):
             Finf = 100
             Fsup = 600
+            if (F > 300): #cambio06tv
+                Kv = 3.31
+            else:
+                Kv = 1.35
         else:
             Finf = 600
             Fsup = 2000
-            
-        #Pi = 3.14159265358979
+            if (F > 1000): #cambio07tv
+                Kv = 6.0
+            else:
+                Kv = 3.31
+        Pi = 3.14159265358979
         d0 = 0
         d = 0
         Ec = 106.9
@@ -76,7 +83,7 @@ class CalculosZona1546():
                 E20inf = self.Campo_1546(d, 20, Finf)
                 E10sup = self.Campo_1546(d, 10, Fsup)
                 E20sup = self.Campo_1546(d, 20, Fsup)
-                v1 = ((1.35 * math.atan(1/900))-0.1)
+                v1 = ((Kv * (180 / Pi) * math.atan(10/9000))-0.1)
                 Ezeroa = Calculos.Log10(math.sqrt(v1**2 + 1) + v1)
                 Ezeroinf = E10inf + 0.5 * (E10inf - E20inf + (6.03 - (6.9 + 20 * Ezeroa)))
                 Ezerosup = E10sup + 0.5 * (E10sup - E20sup + (6.03 - (6.9 + 20 * Ezeroa)))
@@ -135,11 +142,11 @@ class CalculosZona1546():
             if (h2 >= Rcd):
                 FcR = (3.2 + 6.2 * Calculos.Log10(F)) * Calculos.Log10(h2 / Rcd)
             else:
-                va1 = math.atan(float(20 - h2) / 27)
-                va2 = math.atan(float(Rcd - h2) / 27)
+                va1 = (180 / Pi) * math.atan(float(20 - h2) / 27)
+                va2 = (180 / Pi) * math.atan(float(Rcd - h2) / 27)
                 vv1 = (0.0108 * math.sqrt(F) * math.sqrt((Rcd - h2) * va1))
                 vv2 = (0.0108 * math.sqrt(F) * math.sqrt((Rcd - h2) * va2))
-                FcR = (6.03 - (6.9 + 20 * Calculos.Log10(math.sqrt(((vv1 - 0.1)**2) + 1) + vv2 - 0.1)))
+                FcR = (6.03 - (6.9 + 20 * Calculos.Log10(math.sqrt(((vv2 - 0.1)**2) + 1) + vv2 - 0.1)))
                 #FcR = (6.03 - (6.9 + 20 * Calculos.Log10(math.sqrt((((0.0108 * math.sqrt(F) * math.sqrt((Rcd - h2) * math.atan((20 - h2) / 27))) - 0.1) ** 2) + 1) + (0.0108 * math.sqrt(F) * math.sqrt((Rcd - h2) * math.atan((Rcd - h2) / 27))) - 0.1)))
             
             #Factor de correccion trayectos urbanos
@@ -165,7 +172,7 @@ class CalculosZona1546():
                 h2s = self.tablas.Matriz_Cotas(degRadial/saltoangular, cotaLim/salto*2) + h2
                 theta2 = self.Angulo_Receptor(cotaLim, degRadial, h2)
             
-            thetar = math.atan((self.tablas.Matriz_Cotas(0,0) + h1s - h2s) / (1000*d))
+            thetar = (180 / Pi) * math.atan((self.tablas.Matriz_Cotas(0,0) + h1s - h2s) / (1000*d))
             
             if ((theta2 - thetar) < 40):
                 if ((theta2 - thetar) <= 0.55):

@@ -64,6 +64,7 @@ class TareasGeometricas():
         
         # se agrega el punto central
         p = arcpy.Point(longitud,latitud)
+        arcpy.AddMessage(p)
         #print "Se genera punto central"
         #print p
         for a in range(0,radiales):
@@ -83,8 +84,7 @@ class TareasGeometricas():
             angulo = a * (360 / radiales)
             arcpy.SelectLayerByAttribute_management(lyr,"NEW_SELECTION","angulo={}".format(angulo))
             arcpy.AddSurfaceInformation_3d(lyr,imagen,"Z","BILINEAR")
-        #arcpy.SelectLayerByLocation_management(fcNube, "CLEAR_SELECTION")
-        #arcpy.AddSurfaceInformation_3d(fcNube,imagen,"Z","BILINEAR")
+
         arcpy.AddMessage("Se obtuvieron las alturas para los puntos")
 
         del inCur
@@ -96,29 +96,18 @@ class TareasGeometricas():
         arcpy.AddMessage("---Capa censal---")
 
         suma_censal = 0
-        # poligono = self.GeneraPoligonoInterseccion(x, y, distancias, radiales)
-        # arcpy.env.workspace = "c:\env\Nacional.gdb"
-        # intersectOutput = "capa_interseccion"
         intersectOutput = arcpy.CreateFeatureclass_management("in_memory", "FC", "POLYGON")
         arcpy.env.outputZFlag = "Disabled"
         arcpy.env.outputMFlag = "Disabled"
-        # inFeatures = [poligono, "Valparaiso_Modificado"]
         inFeatures = [poligono, capa_censal]
         arcpy.Intersect_analysis(inFeatures, intersectOutput, "ALL")
-
-        # desc = arcpy.Describe(capa_censal)
-        # tipo = desc.shapeType
-        # arcpy.AddMessage("tipo")
-        # arcpy.AddMessage(tipo)
-
         cursor = arcpy.SearchCursor(intersectOutput)
-        # suma_censal = 0
         count_rows = 0
+
         for row in cursor:
             suma_censal += float(row.getValue("TOT_VIV"))
             count_rows+=1
 
-        # suma_censal = 10
         return suma_censal
     
     # Input: posicion central(longitud,latitud), lista de distancias

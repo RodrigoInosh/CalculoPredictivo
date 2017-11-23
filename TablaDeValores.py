@@ -48,6 +48,7 @@ class TablaValores():
             self.tablaCotas_him.append(valores)
         
     # radial, distancia    
+    # matrizCotas(0,0) es el H[0]
     def Matriz_Cotas(self, r, d):
         radiales = self.params.radiales
         if r>=0 and r<=(radiales-1):

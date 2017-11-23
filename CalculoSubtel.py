@@ -17,7 +17,6 @@ import OtrosCalculos as Calculos
 import arcpy
 
 ''' Inicio del proceso '''
-#arcpy.env.overwriteOutput = True
 params = ParametrosFormulario.ParametrosFormulario()
 
 params.radiales = int(arcpy.GetParameter(0)) 
@@ -40,11 +39,9 @@ params.porcentajeTiempo = arcpy.GetParameter(16)
 params.porcentajeUbicacion = arcpy.GetParameter(17)
 params.frecuencia = arcpy.GetParameter(18)
 params.intensidadCampoReferencia = arcpy.GetParameter(19)
-# params.imagen = arcpy.GetParameter(20)
 params.multiplo = arcpy.GetParameter(20)
-# capa_valparaiso = arcpy.GetParameter(25)
 sde_connection_file = arcpy.GetParameter(24)
-arcpy.AddMessage(sde_connection_file)
+
 params.revalidaParametros()
 
 arcpy.env.workspace = sde_connection_file
@@ -53,6 +50,9 @@ params.potencia = float(params.potencia)/1000
 tareasGeo = TareasGeometricas.TareasGeometricas()
 nubePuntos = tareasGeo.GeneraNubeDePuntos(params.latitud, params.longitud, params.imagen, params.resolucionCalculo, params.radiales)
 matrizCotas = tareasGeo.GeneraMatrizDeCotas(nubePuntos, params.resolucionCalculo)
+alturaEfectiva = 0
+deltaH = ['-']
+alturaTerreno = ['-']
 factor_viviendas_rural = 2
 factor_viviendas_urbano = 4
 
@@ -70,8 +70,6 @@ if(params.recomendacion == "1546-"):
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546_m, params.radiales)
 
     poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1546_m, params.radiales)
-    # suma_censal = tareasGeo.CapaCensal(x, y, a1546_m, params.radiales)
-    #arcpy.SetParameter(25, "Calculado con recomendacion 1546" )
     
 elif(params.recomendacion == "1812"):
     # Calculos para recomendacion 1812
@@ -85,8 +83,6 @@ elif(params.recomendacion == "1812"):
     poli = tareasGeo.GeneraCapaPoligonos(x, y, a1812_m, params.radiales)
 
     poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1812_m, params.radiales)
-    # suma_censal = tareasGeo.CapaCensal(x, y, a1812_m, params.radiales)
-    #arcpy.SetParameter(25, "Calculado con recomendacion 1812" )
 
 elif(params.recomendacion == "1546+"):
     arcpy.AddMessage("Calculos para recomendacion 1546+")
@@ -116,9 +112,6 @@ elif(params.recomendacion == "1546+"):
         poli = tareasGeo.GeneraCapaPoligonos(x, y, a1546_m, params.radiales)
 
         poligono_interseccion = tareasGeo.GeneraPoligonoInterseccion(x, y, a1546_m, params.radiales)
-        # suma_censal = tareasGeo.CapaCensal(x, y, a1546_m, params.radiales)
-        # tareasGeo.suma_censal(distancias)
-        #arcpy.SetParameter(25, "Calculado con recomendacion 1546-" )
 
 if(params.recomendacion == "1546"):
     # Calculos para recomendacion 1546 TVD
@@ -135,6 +128,9 @@ elif(params.recomendacion == "370"):
     arcpy.AddMessage("Calculos para recomendacion 370")
     calculo370 = CalculosZona370.CalculosZona370(params, tablaValores)
     a370 = calculo370.Inicio_370(params.radiales)
+    
+    deltaH = calculo370.deltaH
+    alturaTerreno = calculo370.alturas
     # se multiplica, normalmente por 1 o por 1.3
     a370_m = Calculos.MultiplicaLista(a370, params.multiplo, params.radiales)
     distancias = tareasGeo.ListaAString(a370)
@@ -146,7 +142,12 @@ suma_censal = tareasGeo.CapaCensal(x, y, poligono_interseccion, "Nacional_Rural_
 suma_censal2 = tareasGeo.CapaCensal(x, y, poligono_interseccion, "Nacional_Urbano_Datos") * factor_viviendas_urbano
 suma_censal = suma_censal + suma_censal2
 
+alturaEfectiva = tablaValores.tablaCotas_Valores['ho']
+
 arcpy.SetParameter(21, poli)
 arcpy.SetParameter(22, nubePuntos)
 arcpy.SetParameter(23, distancias)
 arcpy.SetParameter(25, suma_censal)
+arcpy.SetParameter(26, alturaTerreno)
+arcpy.SetParameter(27, alturaEfectiva)
+arcpy.SetParameter(28, deltaH)
