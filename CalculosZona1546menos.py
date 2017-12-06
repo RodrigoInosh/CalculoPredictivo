@@ -80,7 +80,7 @@ class CalculosZona1546menos():
                     Eh1inf = Ezeroinf + 0.1 * h1d * (E10inf - Ezeroinf)
                     Eh1sup = Ezerosup + 0.1 * h1d * (E10sup - Ezerosup)
                 else:
-                    theta1 = self.tablas.tablaCotas_ADT_Maximos[degRadial/20]
+                    theta1 = self.tablas.tablaCotas_ADT_Maximos[degRadial/saltoangular]
                     v1 = ((0.036 * math.sqrt(Finf)) - 0.1)
                     Eh1ainf = Calculos.Log10(math.sqrt((v1**2) + 1) + v1)
                     #Eh1ainf = Log10(Sqr((((0.036 * Sqr(Finf)) - 0.1) ^ 2) + 1) + (0.036 * Sqr(Finf)) - 0.1)
